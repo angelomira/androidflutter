@@ -1,16 +1,8 @@
-# pr3
 
-A new Flutter project.
+## Практическая работа №3
+### Явушкин Мирослав ЭФБО-04-22
 
-## Getting Started
+На данной практической работе я научился работать с "динамическими" виджетами, работать с их состояниями, использовать параметры Image.network (в т.ч. давать права доступа к интернету эмулятору), а также работать с диалоговыми окнами и разработкой функционала добавления/удаления виджетов.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Файл видео слишком большой, ссылка на облако:\
+https://dropmefiles.com/x4SEC

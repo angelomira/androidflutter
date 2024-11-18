@@ -1,6 +1,7 @@
 import 'dart:io';
 
 class Profile {
+  final int id;
   final String name;
   final String surname;
   final String middlename;
@@ -10,6 +11,7 @@ class Profile {
   File? avatarFile;
 
   Profile({
+    required this.id,
     required this.name,
     required this.surname,
     required this.middlename,
@@ -29,6 +31,7 @@ class Profile {
     File? localAvatar,
   }) {
     return Profile(
+      id: id,
       name: name ?? this.name,
       surname: surname ?? this.surname,
       middlename: middleName ?? this.middlename,
@@ -40,10 +43,23 @@ class Profile {
   }
 
   static Profile defaultProfile = Profile(
+    id: -1,
     name: 'Miroslaw',
     surname: 'Javushkin',
     middlename: 'Evgenievich',
     dateBorn: DateTime.now(),
     email: 'javu.mira@github.dev',
   );
+
+  factory Profile.fromJSON(Map<String, dynamic> json) {
+    return Profile(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      email: json['email'] as String,
+      surname: json['surname'] as String,
+      middlename: json['middlename'] as String,
+      avatarLink: json['avatarLink'] as String,
+      dateBorn: DateTime.parse(json['dateborn']),
+    );
+  }
 }

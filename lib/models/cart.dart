@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import '../models/car.dart';
 
 class CartItem {
@@ -10,7 +8,7 @@ class CartItem {
 
   factory CartItem.fromJson(Map<String, dynamic> json) {
     return CartItem(
-      car: Car.fromJson(json['car']),
+      car: Car.fromJson(json['Car']),
       quantity: json['quantity'] as int,
     );
   }

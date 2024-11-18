@@ -6,15 +6,16 @@ import Profile from '../models/profile';
 const prisma = new PrismaClient();
 
 async function main() {
-    const profile = Profile.example();
 
     await prisma.profile.create({
         data: {
-            name: profile.name,
-            surname: profile.surname,
-            middlename: profile.middlename,
-            dateborn: profile.dateBorn,
-            avatarLink: profile.avatarLink
+            email: 'data@.com',
+            password: '123',
+            name: 'profile.name',
+            surname: 'profile.surname',
+            middlename: 'profile.middlename',
+            dateborn: Date.now().toString(),
+            avatarLink: ''
         }
     });
 }

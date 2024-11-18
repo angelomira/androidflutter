@@ -1,3 +1,5 @@
+import 'package:pr9/models/cart.dart';
+
 import '../models/car.dart';
 
-List<Car> carsCart = <Car>[];
+List<CartItem> carsCart = <CartItem>[];

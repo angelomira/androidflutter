@@ -6,6 +6,7 @@ import express,
 
 import { PrismaClient } from '@prisma/client';
 import Profile from '../models/profile';
+import { hash } from 'crypto';
 
 export const ROUTER_PROFILES = express.Router();
 
@@ -39,12 +40,31 @@ ROUTER_PROFILES.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
+ROUTER_PROFILES.post('/auth', async (req: Request, res: Response) => {
+    try {
+        const profile = await prisma.profile.findFirstOrThrow({
+            where: {
+                email: req.body.email,
+                password: hash('sha256', req.body.password)
+            }
+        });
+
+        res.status(200).json(profile);
+        return;
+    } catch(error) {
+        res.status(404).json({ message: 'Incorrect credentials.' });
+        return;
+    }
+});
+
 ROUTER_PROFILES.post('/', async (req: Request, res: Response) => {
     try {
         const item = Profile.create(req.body);
 
         const profile = await prisma.profile.create({
             data: {
+                email: item.email,
+                password: hash('sha256', item.password),
                 name: item.name,
                 surname: item.surname,
                 middlename: item.middlename,

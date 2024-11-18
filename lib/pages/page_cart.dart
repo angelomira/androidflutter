@@ -45,7 +45,6 @@ class _CartScreenState extends State<CartScreen> {
                     style: TextStyle(color: CustomDarkTheme.accentColor)),
                 onPressed: () {
                   CartApiService().deleteCart(id);
-
                   setState(() {
                     cartEntries = CartApiService().getCarts();
 
@@ -101,13 +100,13 @@ class _CartScreenState extends State<CartScreen> {
               return Padding(
                   padding: const EdgeInsets.all(0.0),
                   child: SlidableWidget(
+                    removeCart: removeCart,
+                    cartItem: cartItem,
                     child: CartItemTile(
                       cartItem: cartItem,
                       onIncrease: increaseQuantity,
                       onDecrease: decreaseQuantity,
                     ),
-                    removeCart: removeCart,
-                    cartItem: cartItem,
                   )
               );
             },

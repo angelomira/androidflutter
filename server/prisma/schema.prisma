@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,31 +8,39 @@ datasource db {
 }
 
 model Car {
-  id             Int   @id @default(autoincrement())
-  carName        String
-  carEntry       String
-  price          String
-  linkImage      String
-  linkRefer      String
-  carDescription String
+  id             Int      @id @unique @default(autoincrement())
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  carName        String   @default("") @db.VarChar
+  carEntry       String   @default("") @db.VarChar
+  price          String   @default("")
+  linkImage      String?
+  linkRefer      String?
+  carDescription String?
   isFavorite     Boolean  @default(false)
-
-  carts          Cart[]
+  Cart           Cart[]
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Cart {
-  id       Int @id @default(autoincrement())
-  id_car   Int
-  quantity Int    @default(0)
-  car      Car    @relation(fields: [id_car], references: [id])
+  id         Int      @id @unique @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  id_car     Int
+  id_profile Int
+  quantity   Int
+  Car        Car      @relation(fields: [id_car], references: [id], onDelete: SetDefault)
+  Profile    Profile  @relation(fields: [id_profile], references: [id], onDelete: SetDefault)
 }
 
 model Profile {
-  id          Int   @id @default(autoincrement())
-  name        String
-  surname     String   
-  middlename  String?
-  dateborn    DateTime @default(now())
-  avatarLink  String   @default("https://via.placeholder.com/160")
-  avatarFile  Bytes?
+  id         Int      @id @unique @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  name       String   @default("") @db.VarChar
+  surname    String   @default("") @db.VarChar
+  middlename String?  @db.VarChar
+  dateborn   DateTime @default(now()) @db.Timestamp(6)
+  avatarLink String?  @default("'https://via.placeholder.com/160'")
+  avatarFile String?  @default("")
+  password   String   @default("")
+  email      String   @default("")
+  Cart       Cart[]
 }

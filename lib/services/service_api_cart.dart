@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:pr9/data/profiles.dart';
 
 import '../models/car.dart';
 import '../models/cart.dart';
@@ -10,7 +12,9 @@ class CartApiService {
   // Cart
   Future<List<CartItem>> getCarts() async {
     try {
-      final response = await _dio.get('$_url/cart/');
+      final response =
+          await _dio.get('$_url/cart/', data: {'id_profile': PROFILE_CONST.id});
+
       if (response.statusCode == 200) {
         List<dynamic> data = response.data;
 
@@ -25,13 +29,14 @@ class CartApiService {
 
   Future<CartItem> getCart(int id) async {
     try {
-      final response = await _dio.get('$_url/cart/$id');
+      final response =
+          await _dio.get('$_url/cart/$id', data: {'id_profile': PROFILE_CONST.id});
 
       if (response.statusCode == 200) {
         final cartData = response.data;
 
         return CartItem(
-          car: Car.fromJson(cartData['car']),
+          car: Car.fromJson(cartData['Car']),
           quantity: cartData['quantity'],
         );
       } else {
@@ -44,7 +49,8 @@ class CartApiService {
 
   Future<bool> isInCart(int id) async {
     try {
-      final response = await _dio.get('$_url/cart/$id');
+      final response =
+          await _dio.get('$_url/cart/$id', data: {'id_profile': PROFILE_CONST.id});
 
       if (response.statusCode == 200) {
         return true;
@@ -62,6 +68,7 @@ class CartApiService {
         '$_url/cart',
         data: {
           "id": id,
+          "id_profile": PROFILE_CONST.id,
           "quantity": quantity,
         },
       );
@@ -78,7 +85,8 @@ class CartApiService {
 
   Future<void> increaseCartQuantity(int id) async {
     try {
-      final response = await _dio.put('$_url/cart/increase/$id');
+      final response = await _dio
+          .put('$_url/cart/increase/$id', data: {'id_profile': PROFILE_CONST.id});
 
       if (response.statusCode != 201) {
         throw Exception('Failed to increase cart quantity');
@@ -92,7 +100,8 @@ class CartApiService {
 
   Future<void> decreaseCartQuantity(int id) async {
     try {
-      final response = await _dio.put('$_url/cart/decrease/$id');
+      final response = await _dio
+          .put('$_url/cart/decrease/$id', data: {'id_profile': PROFILE_CONST.id});
 
       if (response.statusCode != 201) {
         throw Exception('Failed to decrease cart quantity');
@@ -106,7 +115,8 @@ class CartApiService {
 
   Future<void> deleteCart(int id) async {
     try {
-      final response = await _dio.delete('$_url/cart/$id');
+      final response =
+          await _dio.delete('$_url/cart/$id', data: {'id_profile': PROFILE_CONST.id});
 
       if (response.statusCode != 204) {
         throw Exception('Failed to delete cart');

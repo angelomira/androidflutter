@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pr9/pages/page_home.dart';
+import 'package:pr9/pages/pages_auth.dart';
 import '../data/profiles.dart';
+import '../models/profile.dart';
 import '../widgets/widget_multiline_label.dart';
 import '../data/pallets.dart';
 import './pages_profile_edit.dart';
@@ -16,11 +19,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   File? _imageFile;
 
   Future<void> _pickImage() async {
@@ -29,8 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (image != null) {
       setState(() {
         _imageFile = File(image.path);
-
-        profile.avatarFile = _imageFile;
+        PROFILE_CONST.avatarFile = _imageFile;
       });
     }
   }
@@ -39,19 +36,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final updatedProfile = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditProfileScreen(profile: profile),
+        builder: (context) => EditProfileScreen(profile: PROFILE_CONST),
       ),
     );
 
     if (updatedProfile != null) {
       setState(() {
-        profile = updatedProfile;
+        PROFILE_CONST = updatedProfile;
       });
     }
   }
 
+  void _leaveAccount() {
+    setState(() {
+      PROFILE_CONST = Profile.defaultProfile; // Reset to default profile
+    });
+
+    // Navigate to the AuthScreen
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => MainPage()),
+          (route) => false, // Remove all previous routes
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Check if user is authorized
+    if (PROFILE_CONST.id == -1) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: CustomDarkTheme.baseColor,
+          title: Center(
+            child: Text(
+              'Unauthorized',
+              style: TextStyle(color: CustomDarkTheme.backgroundColor),
+            ),
+          ),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'You are not authorized.',
+                style: TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AuthScreen()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: CustomDarkTheme.baseColor,
+                ),
+                child: Text('Proceed.', style: TextStyle(color: CustomDarkTheme.backgroundColor)),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Display Profile for authorized users
     return Scaffold(
       appBar: AppBar(
         backgroundColor: CustomDarkTheme.baseColor,
@@ -70,6 +120,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: _leaveAccount,
+            icon: Icon(Icons.logout, color: CustomDarkTheme.backgroundColor),
+            tooltip: 'Leave Account',
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -83,15 +140,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: _pickImage,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
-                    child: profile.avatarFile != null
+                    child: PROFILE_CONST.avatarFile != null
                         ? Image.file(
-                      profile.avatarFile!,
+                      PROFILE_CONST.avatarFile!,
                       width: 128,
                       height: 128,
                       fit: BoxFit.cover,
                     )
                         : Image.network(
-                      profile.avatarLink,
+                      PROFILE_CONST.avatarLink,
                       width: 128,
                       height: 128,
                       fit: BoxFit.cover,
@@ -101,15 +158,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            CustomMultilineLabel.create('Date of birth:', DateFormat('dd/MM/yyyy').format(profile.dateBorn)),
-            CustomMultilineLabel.create('Email:', profile.email),
-            CustomMultilineLabel.create('Name:', profile.name),
-            CustomMultilineLabel.create('Surname:', profile.surname),
-            CustomMultilineLabel.create('Middlename:', profile.middlename),
+            CustomMultilineLabel.create(
+                'Date of birth:', DateFormat('dd/MM/yyyy').format(PROFILE_CONST.dateBorn)),
+            CustomMultilineLabel.create('Email:', PROFILE_CONST.email),
+            CustomMultilineLabel.create('Name:', PROFILE_CONST.name),
+            CustomMultilineLabel.create('Surname:', PROFILE_CONST.surname),
+            CustomMultilineLabel.create('Middlename:', PROFILE_CONST.middlename),
             const SizedBox(height: 100),
             Center(
-              child:
-              SizedBox(
+              child: SizedBox(
                 width: 200.0,
                 height: 60.0,
                 child: ElevatedButton(
@@ -123,12 +180,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(
                       color: CustomDarkTheme.backgroundColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 16, // Font size can remain unchanged
+                      fontSize: 16,
                     ),
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

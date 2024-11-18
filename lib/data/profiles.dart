@@ -1,3 +1,3 @@
 import '../models/profile.dart';
 
-Profile profile = Profile.defaultProfile;
+Profile PROFILE_CONST = Profile.defaultProfile;

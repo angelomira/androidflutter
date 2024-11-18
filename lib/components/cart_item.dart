@@ -112,7 +112,8 @@ class _CartItemTileState extends State<CartItemTile> {
                         Row(
                           children: [
                             IconButton(
-                              icon: Icon(Icons.remove, color: CustomDarkTheme.accentColor),
+                              icon: Icon(Icons.remove,
+                                  color: CustomDarkTheme.accentColor),
                               onPressed: () {
                                 setState(() {
                                   widget.onDecrease(widget.cartItem.car.id);
@@ -120,10 +121,12 @@ class _CartItemTileState extends State<CartItemTile> {
                               },
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 4.0),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.0),
-                                color: CustomDarkTheme.backgroundColor.withOpacity(0.9),
+                                color: CustomDarkTheme.backgroundColor
+                                    .withOpacity(0.9),
                               ),
                               child: Text(
                                 '${cartItem.quantity}', // Display quantity here
@@ -135,7 +138,8 @@ class _CartItemTileState extends State<CartItemTile> {
                               ),
                             ),
                             IconButton(
-                              icon: Icon(Icons.add, color: CustomDarkTheme.accentColor),
+                              icon: Icon(Icons.add,
+                                  color: CustomDarkTheme.accentColor),
                               onPressed: () {
                                 setState(() {
                                   widget.onIncrease(widget.cartItem.car.id);
@@ -146,8 +150,7 @@ class _CartItemTileState extends State<CartItemTile> {
                         ),
                       ],
                     );
-                  }
-              )
+                  })
             ],
           ),
         ),

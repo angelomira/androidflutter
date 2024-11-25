@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:pr9/providers/provider_car.dart';
+import 'package:pr9/providers/provider_cart.dart';
+import 'package:provider/provider.dart';
 import '../pages/page_home.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CarProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 

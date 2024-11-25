@@ -18,11 +18,66 @@ class CarListScreen extends StatefulWidget {
 
 class _CarListScreenState extends State<CarListScreen> {
   late Future<List<Car>> carEntries;
+  String searchQuery = '';
+  TextEditingController searchController = TextEditingController();
+  late List<Car> cars;
 
   @override
   void initState() {
     super.initState();
     carEntries = CarsApiService().getCars();
+    searchController.addListener(() {
+      setState(() {
+        searchQuery = searchController.text.toLowerCase();
+      });
+    });
+  }
+
+  RangeValues priceRange = const RangeValues(1, 250000);
+
+  List<Car> filterByPrice(List<Car> cars) {
+    return cars.where((car) {
+      String data = car.price.substring(1);
+      double price = double.parse(data.split(' ')[0].replaceAll(',', '.'));
+      return price >= priceRange.start && price <= priceRange.end;
+    }).toList();
+  }
+
+  String sortOption = 'Name'; // Default sort option
+
+  List<Car> sortCars(List<Car> cars) {
+    double extractPrice(String price) {
+      // Remove the "$" and anything after the first space
+      String cleanedPrice = price.substring(1).split(' ')[0].replaceAll(',', '');
+      return double.parse(cleanedPrice);
+    }
+
+    switch (sortOption) {
+      case 'Price':
+        cars.sort((a, b) => extractPrice(a.price).compareTo(extractPrice(b.price)));
+        break;
+      case 'Entry':
+        cars.sort((a, b) => a.carEntry.compareTo(b.carEntry));
+        break;
+      case 'Id':
+        cars.sort((a, b) => a.id.compareTo(b.id));
+        break;
+      case 'Name':
+      default:
+        cars.sort((a, b) => a.carName.compareTo(b.carName));
+        break;
+    }
+    return cars;
+  }
+
+  List<Car> filterCars(List<Car> cars) {
+    if (searchQuery.isNotEmpty) {
+      return cars
+          .where((car) => car.carName.toLowerCase().contains(searchQuery))
+          .toList();
+    } else {
+      return cars;
+    }
   }
 
   void toggleFavorite(int id) {
@@ -51,18 +106,17 @@ class _CarListScreenState extends State<CarListScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => CarPage(
-          item: car,
-          toggleFavorite: toggleFavorite,
-          removeCar: removeCar,
-          navigateToEditCarPage: navigateToEditCarPage
-        ),
+            item: car,
+            toggleFavorite: toggleFavorite,
+            removeCar: removeCar,
+            navigateToEditCarPage: navigateToEditCarPage),
       ),
     );
   }
 
   void navigateToEditCarPage(BuildContext context, Car car) async {
-    final Car result = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => EditCarPage(car: car)));
+    final Car result = await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => EditCarPage(car: car)));
 
     Map<String, dynamic> updatedData = {
       'id': car.id,
@@ -111,51 +165,136 @@ class _CarListScreenState extends State<CarListScreen> {
               )
             ],
           );
-      }
-    );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text(
-            "Listed cars",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
+        title: const Center(child: Text('Listing of retro-cars'),)
       ),
-      body: FutureBuilder<List<Car>>(
-        future: carEntries,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No listed cars.'));
-          }
-
-          final cars = snapshot.data!;
-
-          return GridView.builder(
-              padding: const EdgeInsets.only(bottom: 15),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.625,
+      body: Column(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20),
+              Text(
+                'Filter by price and sort by:',
+                style: TextStyle(
+                  color: CustomDarkTheme.additionalColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              itemCount: cars.length,
-              itemBuilder: (BuildContext ctx, int index) {
-                return CarItem(
-                  item: cars[index],
-                  index: index,
-                  removeCar: removeCar,
-                  toggleFavorite: toggleFavorite,
-                  navigateToEditCarPage: navigateToEditCarPage,
-                );
-              });
-        },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RangeSlider(
+                    values: priceRange,
+                    min: 0,
+                    max: 250000,
+                    divisions: 25,
+                    labels: RangeLabels(
+                      '\$${priceRange.start.toInt()}',
+                      '\$${priceRange.end.toInt()}',
+                    ),
+                    onChanged: (RangeValues values) {
+                      setState(() {
+                        priceRange = values;
+                      });
+                    },
+                    activeColor: CustomDarkTheme.baseColor,
+                    inactiveColor: CustomDarkTheme.additionalColor.withOpacity(0.5),
+                  ),
+                  DropdownButton<String>(
+                    value: sortOption,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        sortOption = newValue!;
+                      });
+                    },
+                    items: <String>['Name', 'Price', 'Entry', 'Id']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                            color: CustomDarkTheme.baseColor,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    dropdownColor: CustomDarkTheme.backgroundColor,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                textAlign: TextAlign.center,
+                controller: searchController,
+                decoration: InputDecoration(
+                  hintText: 'Find cars',
+                  hintStyle: TextStyle(
+                    color: CustomDarkTheme.baseColor.withOpacity(0.7),
+                    textBaseline: TextBaseline.ideographic,
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: CustomDarkTheme.baseColor,
+                    ),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: CustomDarkTheme.accentColor,
+                    ),
+                  ),
+                ),
+                cursorColor: CustomDarkTheme.accentColor,
+                cursorErrorColor: CustomDarkTheme.accentColor,
+                style: TextStyle(color: CustomDarkTheme.baseColor),
+              ),
+            ],
+          ),
+          Expanded(
+              child: FutureBuilder<List<Car>>(
+                future: carEntries,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No listed cars.'));
+                  } else if (filterByPrice(sortCars(filterCars(snapshot.data!)))
+                      .isEmpty) {
+                    return const Center(child: Text('No cars found.'));
+                  }
+
+                  cars = filterByPrice(sortCars(filterCars(snapshot.data!)));
+
+                  return GridView.builder(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.625,
+                      ),
+                      itemCount: cars.length,
+                      itemBuilder: (BuildContext ctx, int index) {
+                        return CarItem(
+                          item: cars[index],
+                          index: index,
+                          removeCar: removeCar,
+                          toggleFavorite: toggleFavorite,
+                          navigateToEditCarPage: navigateToEditCarPage,
+                        );
+                      });
+                },
+              ),
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: CustomDarkTheme.additionalColor,

@@ -1,27 +1,19 @@
-import 'package:flutter/cupertino.dart';
-
+import 'package:flutter/material.dart';
 import '../models/car.dart';
+import '../services/service_api_cars.dart';
 
 class CarProvider with ChangeNotifier {
-  List<Car> _carEntries = [];
+  List<Car> _cars = [];
 
-  List<Car> get carEntries => _carEntries;
+  List<Car> get cars => _cars;
 
-  void addCar(Car car) {
-    _carEntries.add(car);
-
+  Future<void> fetchCars() async {
+    _cars = await CarsApiService().getCars();
     notifyListeners();
   }
 
-  void removeCar(int index) {
-    _carEntries.removeAt(index);
-
-    notifyListeners();
-  }
-
-  void initCars(List<Car> cars) {
-    _carEntries = cars;
-
-    notifyListeners();
+  void toggleFavorite(int id) {
+    CarsApiService().updateFavorite(id);
+    fetchCars(); // Refresh the list
   }
 }

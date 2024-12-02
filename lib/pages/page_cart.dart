@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pr9/data/profiles.dart';
+import 'package:pr9/services/service_api_orders.dart';
 import '../services/service_api_cart.dart';
 
 import '../components/cart_item.dart';
@@ -14,15 +16,22 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  final CartApiService _cartApiService = CartApiService();
   late Future<List<CartItem>> cartEntries;
 
   @override
   void initState() {
     super.initState();
-    cartEntries = CartApiService().getCarts();
+    _loadCartItems();
   }
 
-  void removeCart(int id) {
+  void _loadCartItems() {
+    setState(() {
+      cartEntries = _cartApiService.getCarts();
+    });
+  }
+
+  void removeCart(int id) async {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -43,10 +52,11 @@ class _CartScreenState extends State<CartScreen> {
               TextButton(
                 child: Text('Delete',
                     style: TextStyle(color: CustomDarkTheme.accentColor)),
-                onPressed: () {
-                  CartApiService().deleteCart(id);
+                onPressed: () async {
+                  await _cartApiService.deleteCart(id);
+
                   setState(() {
-                    cartEntries = CartApiService().getCarts();
+                    _loadCartItems();
 
                     Navigator.of(context).pop();
                   });
@@ -54,22 +64,46 @@ class _CartScreenState extends State<CartScreen> {
               )
             ],
           );
-        }
-    );
+        });
   }
 
   void increaseQuantity(int id) async {
     await CartApiService().increaseCartQuantity(id);
     setState(() {
-      cartEntries = CartApiService().getCarts();
+      _loadCartItems();
     });
   }
 
   void decreaseQuantity(int id) async {
     await CartApiService().decreaseCartQuantity(id);
     setState(() {
-      cartEntries = CartApiService().getCarts();
+      _loadCartItems();
     });
+  }
+
+  Future<void> _placeOrder() async {
+    try {
+      final cartItems = await cartEntries;
+      final itemIds = cartItems.map((item) => item.car.id).toList();
+
+      if (itemIds.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Order placed successfully!')),
+        );
+
+        await OrdersService().placeOrder();
+
+        _loadCartItems();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cart is empty. Add items to order!')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to place order: ${e.toString()}')),
+      );
+    }
   }
 
   @override
@@ -107,12 +141,58 @@ class _CartScreenState extends State<CartScreen> {
                       onIncrease: increaseQuantity,
                       onDecrease: decreaseQuantity,
                     ),
-                  )
-              );
+                  ));
             },
           );
         },
       ),
+      bottomNavigationBar: PROFILE_CONST.id != -1
+          ? Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: CustomDarkTheme.baseColor,
+                  foregroundColor: CustomDarkTheme.accentColor,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                ),
+                onPressed: _placeOrder,
+                child: const Text(
+                  'Place Order',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            )
+          : Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey,
+                  foregroundColor: Colors.black87,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                ),
+                onPressed: () {
+                  const SnackBar(content: Text('You need to authorize to make orders!'),);
+                },
+                child: const Text(
+                  'Order function is not avalaible.',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
     );
   }
 }

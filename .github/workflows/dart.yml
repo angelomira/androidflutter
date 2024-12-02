@@ -12,11 +12,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Step 1.1: Remove existing Flutter installation (if any)
+      - name: Remove existing Flutter installation
+        run: |
+          sudo rm -rf $HOME/flutter
+
       # Step 2: Set up Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'  # specify the Flutter version (e.g., 'stable', 'beta', or a specific version)
+          flutter-version: '3.24.1'  # Replace with the latest stable version
 
       # Step 3: Install dependencies
       - name: Install dependencies

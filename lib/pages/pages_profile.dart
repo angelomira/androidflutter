@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pr9/pages/page_home.dart';
 import 'package:pr9/pages/pages_auth.dart';
+import 'package:pr9/pages/pages_orders_history.dart';
 import '../data/profiles.dart';
 import '../models/profile.dart';
 import '../widgets/widget_multiline_label.dart';
@@ -165,23 +166,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
             CustomMultilineLabel.create('Surname:', PROFILE_CONST.surname),
             CustomMultilineLabel.create('Middlename:', PROFILE_CONST.middlename),
             const SizedBox(height: 100),
-            Center(
-              child: SizedBox(
-                width: 200.0,
-                height: 60.0,
-                child: ElevatedButton(
-                  onPressed: _editProfile,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: CustomDarkTheme.baseColor,
-                    padding: const EdgeInsets.all(0),
+            SizedBox(
+              width: double.infinity,
+              height: 60.0,
+              child: ElevatedButton(
+                onPressed: _editProfile,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
                   ),
-                  child: Text(
-                    'Edit Profile',
-                    style: TextStyle(
-                      color: CustomDarkTheme.backgroundColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                ),
+                child: Text(
+                  'Edit profile',
+                  style: TextStyle(
+                    color: CustomDarkTheme.accentColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16,),
+            SizedBox(
+              width: double.infinity,
+              height: 60.0,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const OrdersHistoryPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                ),
+                child: Text(
+                  'Orders history',
+                  style: TextStyle(
+                    color: CustomDarkTheme.accentColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
               ),

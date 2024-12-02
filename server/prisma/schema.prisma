@@ -27,8 +27,11 @@ model Cart {
   id_car     Int
   id_profile Int
   quantity   Int
+  is_ordered Boolean  @default(false)
+  order_id   Int?
   Car        Car      @relation(fields: [id_car], references: [id], onDelete: SetDefault)
   Profile    Profile  @relation(fields: [id_profile], references: [id], onDelete: SetDefault)
+  Orders     Orders?  @relation(fields: [order_id], references: [id], onDelete: SetDefault)
 }
 
 model Profile {
@@ -43,4 +46,16 @@ model Profile {
   password   String   @default("")
   email      String   @default("")
   Cart       Cart[]
+  Orders     Orders[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Orders {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  ordered_at DateTime @default(now()) @db.Timestamptz(6)
+  status     String?  @default("IN ORDER")
+  profile_id Int
+  Cart       Cart[]
+  Profile    Profile  @relation(fields: [profile_id], references: [id], onDelete: SetDefault)
 }

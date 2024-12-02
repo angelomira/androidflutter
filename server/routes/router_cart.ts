@@ -18,7 +18,8 @@ ROUTER_CART.get('/', async (req: Request, res: Response) => {
             Car: true
         },
         where: {
-            id_profile: Number(req.body.id_profile)
+            id_profile: Number(req.body.id_profile),
+            is_ordered: false
         }
     });
 
@@ -36,7 +37,8 @@ ROUTER_CART.get('/:id', async (req: Request, res: Response) => {
     const cart = await prisma.cart.findFirst({
         where: {
             id_car: Number(req.params.id),
-            id_profile: Number(req.body.id_profile)
+            id_profile: Number(req.body.id_profile),
+            is_ordered: false
         },
         include: {
             Car: true
@@ -45,7 +47,6 @@ ROUTER_CART.get('/:id', async (req: Request, res: Response) => {
 
     if(cart) {
         res.status(200).json(cart);
-        console.log(cart);
         return;
     }
     else {
@@ -58,9 +59,10 @@ ROUTER_CART.post('/', async (req: Request, res: Response) => {
     try {
         const cart = await prisma.cart.create({
             data: {
-                id_car: req.body.id,
+                id_car: Number(req.body.id),
                 quantity: 1,
-                id_profile: req.body.id_profile
+                id_profile: Number(req.body.id_profile),
+                is_ordered: false
             },
             include: {
                 Car: true
@@ -77,14 +79,16 @@ ROUTER_CART.put('/increase/:id', async (req: Request, res: Response) => {
         const cart = await prisma.cart.findFirst({
             where: {
                 id_car: Number(req.params.id),
-                id_profile: Number(req.body.id_profile)
+                id_profile: Number(req.body.id_profile),
+                is_ordered: false
             }
         });
 
         const updated = await prisma.cart.update({
             where: {
                 id: cart!.id,
-                id_profile: Number(req.body.id_profile)
+                id_profile: Number(req.body.id_profile),
+                is_ordered: false
             },
             data: {
                 quantity: cart!.quantity + 1
@@ -101,7 +105,8 @@ ROUTER_CART.put('/decrease/:id', async (req: Request, res: Response) => {
         const cart = await prisma.cart.findFirst({
             where: {
                 id_car: Number(req.params.id),
-                id_profile: Number(req.body.body)
+                id_profile: Number(req.body.body),
+                is_ordered: false
             }
         });
 
@@ -110,7 +115,8 @@ ROUTER_CART.put('/decrease/:id', async (req: Request, res: Response) => {
         const updated = await prisma.cart.update({
             where: {
                 id: cart!.id,
-                id_profile: Number(req.body.body)
+                id_profile: Number(req.body.body),
+                is_ordered: false
             },
             data: {
                 quantity: cart!.quantity - 1
@@ -127,7 +133,8 @@ ROUTER_CART.delete('/:id', async (req: Request, res: Response) => {
         const cart = await prisma.cart.findFirst({
             where: {
                 id_car: Number(req.params.id),
-                id_profile: Number(req.body.id_profile)
+                id_profile: Number(req.body.id_profile),
+                is_ordered: false
             }
         });
 
@@ -135,7 +142,8 @@ ROUTER_CART.delete('/:id', async (req: Request, res: Response) => {
             where: {
                 id: cart!.id,
                 id_car: cart!.id_car,
-                id_profile: cart!.id_profile
+                id_profile: cart!.id_profile,
+                is_ordered: false
             }
         });
     } catch(error) {

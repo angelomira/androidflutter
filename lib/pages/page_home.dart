@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/profiles.dart';
 import '../pages/page_cart.dart';
 import '../data/pallets.dart';
@@ -22,6 +25,19 @@ class _MainPageState extends State<MainPage> {
     const CartScreen(),
     const ProfileScreen(),
   ];
+
+  void _checkSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    final profileJson = prefs.getString('profile');
+
+    if (profileJson != null) {
+      PROFILE_CONST = Profile.fromJSON(json.decode(profileJson));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainPage()),
+      );
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {

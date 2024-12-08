@@ -62,4 +62,16 @@ class Profile {
       dateBorn: DateTime.parse(json['dateborn']),
     );
   }
+
+  Object? toJson() {
+    return {
+      'id': this.id,
+      'name': this.name,
+      'email': this.email,
+      'surname': this.surname,
+      'middlename': this.middlename,
+      'avatarLink': this.avatarLink,
+      'dateborn': this.dateBorn.toLocal().toString()
+    };
+  }
 }

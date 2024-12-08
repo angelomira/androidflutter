@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:pr9/pages/page_home.dart';
 import 'package:pr9/pages/pages_auth.dart';
 import 'package:pr9/pages/pages_orders_history.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/profiles.dart';
 import '../models/profile.dart';
 import '../widgets/widget_multiline_label.dart';
@@ -48,9 +49,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _leaveAccount() {
-    setState(() {
+  void _leaveAccount() async {
+    setState(() async {
       PROFILE_CONST = Profile.defaultProfile; // Reset to default profile
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
     });
 
     // Navigate to the AuthScreen

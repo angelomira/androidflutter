@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pr9/data/profiles.dart';
 import 'package:pr9/pages/page_home.dart';
 import 'package:pr9/pages/pages_profile.dart';
 import 'package:pr9/pages/pages_register.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/pallets.dart';
 import '../services/service_api_profiles.dart';
@@ -45,6 +48,9 @@ class _AuthScreenState extends State<AuthScreen> {
           const SnackBar(content: Text('Login successful!')),
         );
         PROFILE_CONST = profile;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('profile', json.encode(profile.toJson()));
+
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => MainPage()),

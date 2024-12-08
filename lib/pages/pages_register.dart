@@ -20,10 +20,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   // User inputs
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _repeatPasswordController =
+      TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _middlenameController = TextEditingController();
   DateTime? _selectedDate;
+
+  // Password visibility
+  bool _isPasswordVisible = false;
+  bool _isRepeatPasswordVisible = false;
 
   Future<void> _pickDate() async {
     final DateTime? picked = await showDatePicker(
@@ -57,7 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => MainPage()),
-              (route) => false, // Remove all previous routes
+          (route) => false, // Remove all previous routes
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -121,12 +127,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   cursorColor: CustomDarkTheme.accentColor,
                   maxLines: 1,
                 ),
-                const SizedBox(
-                  height: 24.0,
-                ),
+                const SizedBox(height: 24.0),
                 //-----------------------------------------------
                 TextFormField(
                   controller: _passwordController,
+                  obscureText: !_isPasswordVisible,
                   validator: (value) {
                     if (value == null || value.isEmpty || value.length < 6) {
                       return 'Password must be at least 6 characters';
@@ -160,13 +165,80 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         width: 1.5,
                       ),
                     ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
                   ),
                   cursorColor: CustomDarkTheme.accentColor,
                   maxLines: 1,
                 ),
-                const SizedBox(
-                  height: 24.0,
+                const SizedBox(height: 24.0),
+                //-----------------------------------------------
+                TextFormField(
+                  controller: _repeatPasswordController,
+                  obscureText: !_isRepeatPasswordVisible,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please repeat your password';
+                    }
+                    if (value != _passwordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide(
+                        color: CustomDarkTheme.baseColor,
+                        width: 1.5,
+                      ),
+                    ),
+                    hintText: 'Repeat Password',
+                    hintStyle:
+                        TextStyle(color: CustomDarkTheme.backgroundColor),
+                    labelText: 'Repeat your password:',
+                    labelStyle: TextStyle(color: CustomDarkTheme.accentColor),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide(
+                        color: CustomDarkTheme.baseColor,
+                        width: 1.5,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide(
+                        color: CustomDarkTheme.accentColor,
+                        width: 1.5,
+                      ),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isRepeatPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isRepeatPasswordVisible = !_isRepeatPasswordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                  cursorColor: CustomDarkTheme.accentColor,
+                  maxLines: 1,
                 ),
+                const SizedBox(height: 24.0),
                 //-----------------------------------------------
                 TextFormField(
                   controller: _nameController,
@@ -207,87 +279,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   cursorColor: CustomDarkTheme.accentColor,
                   maxLines: 1,
                 ),
-                const SizedBox(
-                  height: 24.0,
-                ),
+                const SizedBox(height: 24.0),
                 //-----------------------------------------------
-                TextFormField(
-                  controller: _surnameController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Enter your surname';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(
-                        color: CustomDarkTheme.baseColor,
-                        width: 1.5,
-                      ),
-                    ),
-                    hintText: 'Surname',
-                    hintStyle:
-                        TextStyle(color: CustomDarkTheme.backgroundColor),
-                    labelText: 'Enter your surname:',
-                    labelStyle: TextStyle(color: CustomDarkTheme.accentColor),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(
-                        color: CustomDarkTheme.baseColor,
-                        width: 1.5,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(
-                        color: CustomDarkTheme.accentColor,
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                  cursorColor: CustomDarkTheme.accentColor,
-                  maxLines: 1,
-                ),
-                const SizedBox(
-                  height: 24.0,
-                ),
-                //-----------------------------------------------
-                TextFormField(
-                  controller: _middlenameController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(
-                        color: CustomDarkTheme.baseColor,
-                        width: 1.5,
-                      ),
-                    ),
-                    hintText: 'Middlename',
-                    hintStyle:
-                        TextStyle(color: CustomDarkTheme.backgroundColor),
-                    labelText: 'Enter your middlename:',
-                    labelStyle: TextStyle(color: CustomDarkTheme.accentColor),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(
-                        color: CustomDarkTheme.baseColor,
-                        width: 1.5,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(
-                        color: CustomDarkTheme.accentColor,
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                  cursorColor: CustomDarkTheme.accentColor,
-                  maxLines: 1,
+                ElevatedButton(
+                  onPressed: _register,
+                  child: const Text('Register'),
                 ),
                 const SizedBox(height: 24.0),
+                //-----------------------------------------------
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -296,18 +295,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         _selectedDate == null
                             ? 'Date of birth: not selected.'
                             : 'Date of birth: ${DateFormat('dd/MM/yyyy').format(_selectedDate!)}',
-                      style: const TextStyle(fontSize: 18),),
+                        style: const TextStyle(fontSize: 18),
+                      ),
                       IconButton(
                         icon: const Icon(Icons.calendar_today),
                         onPressed: _pickDate,
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _register,
-                  child: const Text('Register'),
                 ),
               ],
             ),

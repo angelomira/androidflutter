@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pr9/pages/page_chat.dart';
 import 'package:pr9/pages/page_home.dart';
 import 'package:pr9/pages/pages_auth.dart';
 import 'package:pr9/pages/pages_orders_history.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/profiles.dart';
 import '../models/profile.dart';
+import '../services/service_chat_firebase.dart';
 import '../widgets/widget_multiline_label.dart';
 import '../data/pallets.dart';
 import './pages_profile_edit.dart';
@@ -22,6 +24,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   File? _imageFile;
+  final ChatService _chatService = ChatService();
 
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
@@ -212,6 +215,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: Text(
                   'Orders history',
+                  style: TextStyle(
+                    color: CustomDarkTheme.accentColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16,),
+            SizedBox(
+              width: double.infinity,
+              height: 60.0,
+              child: ElevatedButton(
+                onPressed: () async {
+                  String? chatId = await _chatService.getOrCreateChat();
+                  if (chatId != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatPage(chatId: chatId)),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                ),
+                child: Text(
+                  'Talk with support',
                   style: TextStyle(
                     color: CustomDarkTheme.accentColor,
                     fontWeight: FontWeight.bold,

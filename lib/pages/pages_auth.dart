@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pr9/data/profiles.dart';
 import 'package:pr9/pages/page_home.dart';
@@ -27,6 +28,8 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLoading = false;
   String? _errorMessage;
 
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   void _login() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
@@ -34,16 +37,21 @@ class _AuthScreenState extends State<AuthScreen> {
         _errorMessage = null;
       });
 
-      final profile = await _apiService.login(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
+      try {
+        final profile = await _apiService.login(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
 
-      setState(() {
-        _isLoading = false;
-      });
+        if (profile == null) {
+          setState(() {
+            _errorMessage = 'Invalid credentials. Please try again.';
+          });
+          return;
+        }
 
-      if (profile != null) {
+        UserCredential userCredential = await _firebaseAuth.signInAnonymously();
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login successful!')),
         );
@@ -56,9 +64,9 @@ class _AuthScreenState extends State<AuthScreen> {
           MaterialPageRoute(builder: (context) => MainPage()),
               (route) => false, // Remove all previous routes
         );
-      } else {
+      } finally {
         setState(() {
-          _errorMessage = 'Invalid credentials. Please try again.';
+          _isLoading = false;
         });
       }
     }

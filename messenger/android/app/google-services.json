@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "669698412000",
+    "project_id": "retro-cars-listing-shop",
+    "storage_bucket": "retro-cars-listing-shop.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669698412000:android:341c1b2327b283901c2f85",
+        "android_client_info": {
+          "package_name": "com.angelomira.retrocars"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5szfg8D_o3uUTyR6r3uDd5s9FJXRoFJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669698412000:android:4e1fb56177bac8931c2f85",
+        "android_client_info": {
+          "package_name": "com.example.messenger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5szfg8D_o3uUTyR6r3uDd5s9FJXRoFJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669698412000:android:a79c3adaa72a24281c2f85",
+        "android_client_info": {
+          "package_name": "com.example.pr9"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5szfg8D_o3uUTyR6r3uDd5s9FJXRoFJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

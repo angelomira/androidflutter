@@ -52,12 +52,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _leaveAccount() async {
-    setState(() async {
+  void _leaveAccount() {
+    setState(() {
       PROFILE_CONST = Profile.defaultProfile; // Reset to default profile
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
+      final prefs = SharedPreferences.getInstance().then((onValue) {
+        onValue.clear();
+      });
     });
 
     // Navigate to the AuthScreen

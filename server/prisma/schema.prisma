@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Car {
+  id             Int      @id @unique @default(autoincrement())
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  carName        String   @default("") @db.VarChar
+  carEntry       String   @default("") @db.VarChar
+  price          String   @default("")
+  linkImage      String?
+  linkRefer      String?
+  carDescription String?
+  isFavorite     Boolean  @default(false)
+  Cart           Cart[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Cart {
+  id         Int      @id @unique @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  id_car     Int
+  id_profile Int
+  quantity   Int
+  is_ordered Boolean  @default(false)
+  order_id   Int?
+  Car        Car      @relation(fields: [id_car], references: [id], onDelete: SetDefault)
+  Profile    Profile  @relation(fields: [id_profile], references: [id], onDelete: SetDefault)
+  Orders     Orders?  @relation(fields: [order_id], references: [id], onDelete: SetDefault)
+}
+
+model Profile {
+  id         Int      @id @unique @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  name       String   @default("") @db.VarChar
+  surname    String   @default("") @db.VarChar
+  middlename String?  @db.VarChar
+  dateborn   DateTime @default(now()) @db.Timestamp(6)
+  avatarLink String?  @default("'https://via.placeholder.com/160'")
+  avatarFile String?  @default("")
+  password   String   @default("")
+  email      String   @default("")
+  Cart       Cart[]
+  Orders     Orders[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Orders {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  ordered_at DateTime @default(now()) @db.Timestamptz(6)
+  status     String?  @default("IN ORDER")
+  profile_id Int
+  Cart       Cart[]
+  Profile    Profile  @relation(fields: [profile_id], references: [id], onDelete: SetDefault)
+}

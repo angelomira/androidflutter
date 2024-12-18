@@ -4,11 +4,11 @@ import express,
         Response
     } from 'express';
 
-import { ROUTER_CARS } from './routes/router_cars';
-import { ROUTER_CART } from './routes/router_cart';
-import { ROUTER_FAVORITES } from './routes/router_favorites';
-import { ROUTER_PROFILES } from './routes/router_profiles';
-import { ROUTER_ORDERS } from './routes/router_orders';
+import { ROUTER_CARS } from '../routes/router_cars';
+import { ROUTER_CART } from '../routes/router_cart';
+import { ROUTER_FAVORITES } from '../routes/router_favorites';
+import { ROUTER_PROFILES } from '../routes/router_profiles';
+import { ROUTER_ORDERS } from '../routes/router_orders';
 
 const app = express();
 

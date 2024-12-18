@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && prisma generate",
     "start": "tsc && node out/server.js",
     "migrate": "ts-node migrations/generate_cars.ts && ts-node migrations/generate_profile.ts"
   },

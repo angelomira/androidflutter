@@ -4,7 +4,7 @@ import '../models/profile.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-  final String url = 'http://10.0.2.2:3000';
+  final String url = 'https://androidflutter.vercel.app';
 
   Future<bool> registerUser({
     required String email,

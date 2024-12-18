@@ -3,7 +3,7 @@ import '../models/car.dart';
 
 class CarsApiService {
   final Dio _dio = Dio();
-  final String _url = 'http://10.0.2.2:3000';
+  final String _url = 'https://androidflutter.vercel.app';
 
   // Cars
   Future<List<Car>> getCars() async {

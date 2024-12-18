@@ -5,7 +5,7 @@ import '../models/orders.dart';
 
 class OrdersService {
   final Dio _dio = Dio(BaseOptions(
-    baseUrl: 'http://10.0.2.2:3000'));
+    baseUrl: 'https://androidflutter.vercel.app'));
 
   // Fetch all orders for a profile
   Future<List<OrderItem>> getOrders() async {
